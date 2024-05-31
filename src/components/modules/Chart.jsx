@@ -1,0 +1,74 @@
+import React, { useState } from 'react'
+import styles from './Chart.module.css'
+import { convertData } from '../../helpers/convertData';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+function Chart({chart,setChart}) {
+  const [type,setType]=useState("prices")
+  const typeHandler=(event)=>{
+    if(event.target.tagName==="BUTTON"){
+      const type=event.target.innerText.toLowerCase().replace(" ","_");
+     console.log(type);
+     setType(type);
+    }
+  }
+  return (
+    
+    <div className={styles.container}>
+        <span className={styles.cross} onClick={()=>setChart(null)}>
+        X
+        </span>
+        <div className={styles.chart}>
+        <div className={styles.name}>
+          <img src={chart.coin.image}/>
+          <p>{chart.coin.name}</p>
+        </div>
+          <div className={styles.graph}>
+          <ResponsiveContainer width="100%" height="100%">
+  <LineChart
+  width={400}
+  height={400}
+  data={convertData(chart , type)}
+  margin={{
+    top: 5,
+    right: 30,
+    left: 20,
+    bottom: 5,
+  }}
+>
+  <Line type="monotone" dataKey={type} stroke="#8884d8" strokeWidth="2px" />
+  <YAxis dataKey={type} domain={["auto","auto"]}/>
+  <XAxis dataKey="date" hide/>
+  <Legend/>
+  <Tooltip/>
+  <CartesianGrid stroke="#404042" />
+  </LineChart>
+  </ResponsiveContainer> 
+  <div className={styles.types} onClick={typeHandler}>
+            <button className={type==="prices"?styles.selected :null}>Prices</button>
+            <button className={type==="market-caps"?styles.selected :null}>Market Caps</button>
+            <button className={type==="total_volumes"?styles.selected :null}>Total Volumes</button>
+            <div className={styles.details}>
+            <div>
+              <p>Price:</p>
+              <span>${chart.coin.current_price}</span>
+            </div>
+            <div>
+              <p>ATH:</p>
+              <span>${chart.coin.ath}</span>
+            </div>
+            <div>
+              <p>Market Cap:</p>
+              <span>${chart.coin.market_cap}</span>
+            </div>
+          </div>
+          </div>
+          
+          </div>
+        </div>
+        </div>
+  )
+}
+
+export default Chart
+
